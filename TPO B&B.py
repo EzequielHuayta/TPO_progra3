@@ -26,6 +26,7 @@ def camino_valido(tablero, movs=0, mov=[], a=[]):
     n = len(tablero)
     if movs == n * n - 1:
         imprimir(tablero)
+        print("--- %s seconds ---" % (time.time() - tiempo))
         return True
     
     # Generar lista de movimientos posibles junto con el número de opciones futuras
@@ -51,14 +52,12 @@ def camino_valido(tablero, movs=0, mov=[], a=[]):
 n = int(input("Ingrese el tamaño del tablero: "))
 x = int(input("Ingrese la coordenada en las filas: "))
 y = int(input("Ingrese la coordenada en las columnas: "))
-current_local_time = time.ctime()
-print("Current local time:", current_local_time)
+
 a = [x - 1, y - 1]  # Ajustar índices para comenzar desde 0
 mov = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
 tablero = []
+tiempo = time.time()
 crear_tablero(n, tablero, a)
-
 if not camino_valido(tablero, 0, mov, a):
     print("No hay solución")
-current_local_time = time.ctime()
-print("Current local time:", current_local_time)
+    print("--- %s seconds ---" % (time.time() - tiempo))
