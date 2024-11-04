@@ -31,28 +31,6 @@ def camino_valido(tablero, movs=0, n=2, mov=[], a=[]):
 
     return False
 
-def camino_valido_opt(tablero, movs=0, n=8, mov=[], a=[], camino=[]):
-    # Agregar la posición actual al camino
-    camino.append(a)
-
-    # Si hemos alcanzado todos los movimientos necesarios, marcamos el tablero con el camino encontrado
-    if movs == n * n - 1:
-        for paso, (x, y) in enumerate(camino):
-            tablero[x][y] = paso + 1
-        imprimir(tablero)
-        return True  # Termina al encontrar la solución completa
-
-    # Intentar cada movimiento en el orden dado
-    for dx, dy in mov:
-        x, y = a[0] + dx, a[1] + dy
-        if 0 <= x < len(tablero) and 0 <= y < len(tablero[0]) and tablero[x][y] == 0:
-            if camino_valido_opt(tablero, movs + 1, n, mov, [x, y], camino):
-                return True
-
-    # Retiramos la posición del camino si no encontramos solución con ella
-    camino.pop()
-    return False
-
 # Main:
 n = int(input("Ingrese el tamaño del tablero: "))
 x = int(input("Ingrese la coordenada en las filas: "))
@@ -67,5 +45,3 @@ crear_tablero(n, tablero, a)
 if camino_valido(tablero, 0, n, mov, a)==False:
     print("No hay solucion")
 
-#if camino_valido_opt(tablero,0,n,mov,a,camino)==False:
-#    print("No hay solucion")
