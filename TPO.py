@@ -1,3 +1,4 @@
+import time
 def crear_tablero(n, tablero, a):
     for i in range(n):
         fila = [0] * n  # Crear una fila de n ceros
@@ -14,6 +15,7 @@ def camino_valido(tablero, movs=0, n=2, mov=[], a=[]):
     # Si hemos alcanzado todos los movimientos necesarios, imprimimos el tablero
     if movs == (n * n)-1:
         imprimir(tablero)
+        print("--- %s seconds ---" % (time.time() - tiempo))
         return True
     # Intentamos cada movimiento posible
     for i in range(8):
@@ -35,15 +37,14 @@ def camino_valido(tablero, movs=0, n=2, mov=[], a=[]):
 n = int(input("Ingrese el tamaño del tablero: "))
 x = int(input("Ingrese la coordenada en las filas: "))
 y = int(input("Ingrese la coordenada en las columnas: "))
-current_local_time = time.ctime()
-print("Current local time:", current_local_time)
+
 a = [x-1, y-1]
 mov = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
 tablero = []
 camino=[]
+tiempo=time.time()
 crear_tablero(n, tablero, a)
 
 if camino_valido(tablero, 0, n, mov, a)==False:
     print("No hay solucion")
-current_local_time = time.ctime()
-print("Current local time:", current_local_time)
+    print("--- %s seconds ---" % (time.time() - tiempo))
