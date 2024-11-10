@@ -1,4 +1,5 @@
 import time
+
 def crear_tablero(n, tablero, a):
     for i in range(n):
         fila = [0] * n  # Crear una fila de n ceros
@@ -22,10 +23,13 @@ def movimientos_disponibles(tablero, x, y, mov):
     return count
 
 # Función que aplica la heurística de advertencia mínima (Warnsdorff's rule)
-def camino_valido(tablero, movs=0, mov=[], a=[]):
+def camino_valido(tablero, movs=0, mov=[], a=[], registro_movimientos=[], conteo_movimientos={}):
     n = len(tablero)
     if movs == n * n - 1:
         imprimir(tablero)
+        print("Registro de movimientos:")
+        for movimiento, conteo in conteo_movimientos.items():
+            print(f"mov {movimiento} utilizado {conteo} veces")
         print("--- %s seconds ---" % (time.time() - tiempo))
         return True
     
@@ -35,17 +39,30 @@ def camino_valido(tablero, movs=0, mov=[], a=[]):
         x, y = a[0] + mov[i][0], a[1] + mov[i][1]
         if 0 <= x < n and 0 <= y < n and tablero[x][y] == 0:
             futuros_movs = movimientos_disponibles(tablero, x, y, mov)
-            posibles_movs.append((futuros_movs, x, y))
+            posibles_movs.append((futuros_movs, x, y, mov[i]))
     
     # Ordenar movimientos posibles por número de futuros movimientos (menor a mayor)
     posibles_movs.sort()
     
     # Intentar cada movimiento en el orden establecido por la heurística
-    for _, x, y in posibles_movs:
+    for _, x, y, movimiento in posibles_movs:
         tablero[x][y] = movs + 2
-        if camino_valido(tablero, movs + 1, mov, [x, y]):
+        registro_movimientos.append((x, y))  # Agregar movimiento al registro
+        
+        # Incrementar el conteo de uso del movimiento
+        movimiento_key = tuple(movimiento)
+        if movimiento_key in conteo_movimientos:
+            conteo_movimientos[movimiento_key] += 1
+        else:
+            conteo_movimientos[movimiento_key] = 1
+
+        if camino_valido(tablero, movs + 1, mov, [x, y], registro_movimientos, conteo_movimientos):
             return True
+        
+        # Revertir el movimiento y actualizar conteo y registro
         tablero[x][y] = 0
+        registro_movimientos.pop()
+        conteo_movimientos[movimiento_key] -= 1  # Decrementar el conteo
 
     return False
 
@@ -58,6 +75,9 @@ mov = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
 tablero = []
 tiempo = time.time()
 crear_tablero(n, tablero, a)
-if not camino_valido(tablero, 0, mov, a):
+registro_movimientos = [(a[0], a[1])]  # Iniciar el registro con la posición inicial
+conteo_movimientos = {}  # Diccionario para contar usos de cada movimiento
+
+if not camino_valido(tablero, 0, mov, a, registro_movimientos, conteo_movimientos):
     print("No hay solución")
     print("--- %s seconds ---" % (time.time() - tiempo))
