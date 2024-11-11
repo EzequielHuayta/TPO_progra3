@@ -24,6 +24,8 @@ def movimientos_disponibles(tablero, x, y, mov):
 
 # Función que aplica la heurística de advertencia mínima (Warnsdorff's rule)
 def camino_valido(tablero, movs=0, mov=[], a=[], registro_movimientos=[], conteo_movimientos={}):
+    global decisiones  # Para contar decisiones globalmente
+
     n = len(tablero)
     if movs == n * n - 1:
         imprimir(tablero)
@@ -31,12 +33,16 @@ def camino_valido(tablero, movs=0, mov=[], a=[], registro_movimientos=[], conteo
         for movimiento, conteo in conteo_movimientos.items():
             print(f"mov {movimiento} utilizado {conteo} veces")
         print("--- %s seconds ---" % (time.time() - tiempo))
+        print("Total de decisiones tomadas:", decisiones)
+
         return True
     
     # Generar lista de movimientos posibles junto con el número de opciones futuras
     posibles_movs = []
     for i in range(8):
         x, y = a[0] + mov[i][0], a[1] + mov[i][1]
+        decisiones += 1  # Incrementamos el contador por cada decisión intentada
+
         if 0 <= x < n and 0 <= y < n and tablero[x][y] == 0:
             futuros_movs = movimientos_disponibles(tablero, x, y, mov)
             posibles_movs.append((futuros_movs, x, y, mov[i]))
@@ -75,9 +81,12 @@ mov = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
 tablero = []
 tiempo = time.time()
 crear_tablero(n, tablero, a)
+decisiones = 0
 registro_movimientos = [(a[0], a[1])]  # Iniciar el registro con la posición inicial
 conteo_movimientos = {}  # Diccionario para contar usos de cada movimiento
 
 if not camino_valido(tablero, 0, mov, a, registro_movimientos, conteo_movimientos):
     print("No hay solución")
     print("--- %s seconds ---" % (time.time() - tiempo))
+    print("Total de decisiones tomadas:", decisiones)
+
